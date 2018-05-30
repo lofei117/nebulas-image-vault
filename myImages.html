@@ -55,7 +55,7 @@
                     <a class="nav-link" href="myImages.html">My Images</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="https://github.com/lofei117/nebulas-image-vault/tree/master">Github</a>
+                    <a class="nav-link" href="https://github.com/lofei117/nebulas-image-vault/">Github</a>
                 </li>
             </ul>
             <div class="jumbotron">
@@ -74,7 +74,7 @@
                     <!--Creates the popup content-->
                     <div class="popup-content">
                         <h2>Image Details</h2>
-                        <textarea id="image-detail" rows="6" cols="66"> This is an example pop-up that you can make using jQuery.</textarea>
+                        <textarea id="image-detail" rows="6" cols="66"></textarea>
                         <!--popup's close button-->
                         <p>
                         <button id="close" class="btn btn-primary">Close</button>
@@ -118,7 +118,8 @@
                 if (e.data && e.data.data && e.data.data.account) {
                     nebAddress = e.data.data.account;
                     console.log(nebAddress)
-                    request("getUserImageList", "", function (result) {
+                    console.log("start fetching image list for user:" + nebAddress);
+                    request(nebAddress, "getUserImageList", "", function (result) {
                         if (result) {
                             fillData(result);
                         }
@@ -159,7 +160,7 @@
                             return $("<a>").attr("href", "#").text(value).on("click", function (e) {
                                 e.preventDefault();
                                 $(".popup-overlay, .popup-content").addClass("active");
-                                request("getImageInfoByHash", "\[\"" + value + "\"\]", function (result) {
+                                request(nebAddress, "getImageInfoByHash", "\[\"" + value + "\"\]", function (result) {
                                     $('#image-detail').text((JSON.stringify(result, null, 2)));
 
                                 });
@@ -173,11 +174,7 @@
             });
         }
 
-        function getAddress() {
-            return nebAddress;
-        }
-
-        function request(callFunction, callArgs, callback) {
+        function request(nebAddress, callFunction, callArgs, callback) {
             let value = "0";
             let nonce = "0";
             let gasPrice = "1000000";
@@ -187,7 +184,7 @@
                 "args": callArgs
             };
 
-            neb.api.call(getAddress(), dappAddress, value, nonce, gasPrice, gasLimit, contract).then(function (resp) {
+            neb.api.call(nebAddress, dappAddress, value, nonce, gasPrice, gasLimit, contract).then(function (resp) {
                 console.log("request resp: " + JSON.stringify(resp));
                 if (callback) {
                     callback(resp.result ? JSON.parse(resp.result) : null);
