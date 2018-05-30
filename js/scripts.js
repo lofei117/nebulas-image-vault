@@ -54,12 +54,12 @@ class Author {
 }
 
 var nebAddress, nebState;
-var nebulas = require("nebulas"),
+let nebulas = require("nebulas"),
     Account = nebulas.Account,
     neb = new nebulas.Neb();
-var NebPay = require("nebpay");
-var nebPay = new NebPay();
-var nebConfigArr = {
+let NebPay = require("nebpay");
+let nebPay = new NebPay();
+let nebConfigArr = {
     mainnet: {
         name: "主网",
         contractAddress: "n1k6nm1Y5Z6tS7xYcf8Dmuo9kEhnqCnFT4Y",

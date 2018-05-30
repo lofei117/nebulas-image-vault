@@ -157,29 +157,6 @@
 
         var dappAddress = nebConfig["contractAddress"];
 
-        var serialNumber;
-
-        var intervalQuery
-
-        function funcIntervalQuery() {
-            nebPay.queryPayInfo(serialNumber) //search transaction result from server (result upload to server by app)
-                    .then(function (resp) {
-                        console.log("tx result: " + resp) //resp is a JSON string
-                        var respObject = JSON.parse(resp)
-                        if (respObject.code === 0) {
-                            alert(`upload image succeed!`)
-                            clearInterval(intervalQuery)
-                        }
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-        }
-
-        function cbPush(resp) {
-            console.log("response of push: " + JSON.stringify(resp))
-        }
-
         var image;
         var author = new Author();
 
@@ -199,13 +176,13 @@
 
                 console.log(callArgs)
 
-                serialNumber = nebPay.call(to, value, callFunction, callArgs, { //使用nebpay的call接口去调用合约,
-                    listener: cbPush //设置listener, 处理交易返回信息
+                requestByPay(callFunction, callArgs, function (result) {
+                    console.log("succeed:" + result)
+                    alert(`upload image succeed!`)
+                }, function (e) {
+                    alert("upload image failed: " + e)
                 });
 
-                intervalQuery = setInterval(function () {
-                    funcIntervalQuery();
-                }, 5000);
             } else {
                 alert("You should choose image file first.");
             }
@@ -279,8 +256,8 @@
         });
 
         function arrayBufferToWordArray(ab) {
-            var i8a = new Uint8Array(ab);
-            var a = [];
+            let i8a = new Uint8Array(ab);
+            let a = [];
             for (var i = 0; i < i8a.length; i += 4) {
                 a.push(i8a[i] << 24 | i8a[i + 1] << 16 | i8a[i + 2] << 8 | i8a[i + 3]);
             }
@@ -288,18 +265,56 @@
         }
 
 
-        // var port = chrome.runtime.connect({ name: "contentscript" });
-        // port.postMessage({ src: "contentScript", dst: "background" });
+        function getTransactionReceipt(hash, cb) {
+            $.post(nebConfig["host"] + '/v1/user/getTransactionReceipt', JSON.stringify({
+                "hash": hash
+            }), function (resp) {
+                cb(resp)
+            })
+        }
 
-        // port.onMessage.addListener(function(msg) {
-        //     console.log("port.onMessage: " + JSON.stringify(msg));
+        function regetTransactionReceipt(hash, cb) {
+            let task = setInterval(function () {
+                getTransactionReceipt(hash, function (resp) {
+                    let status = resp.result.status;
+                    if (status === 1 || status === 0) {
+                        clearInterval(task);
+                        cb(resp.result);
+                    }
+                })
+            }, 1000);
+        }
 
-        //     window.postMessage({ //forward msg from background to webpage
-        //         "data": msg
-        //     }, "*");
+        function requestByPay(callFunction, callArgs, callback, onFail) {
+            let to = dappAddress;
+            let value = "0";
 
-        // });
+            nebPay.call(to, value, callFunction, callArgs, {
+                listener: (resp) => {
+                    console.log("response of push: " + JSON.stringify(resp));
+                    if (resp === 'Error: Transaction rejected by user') {
+                        alert('交易已取消！');
+                        return;
+                    }
+                    regetTransactionReceipt(resp.txhash, (result) => {
+                        console.log("result of reget:" + JSON.stringify(result))
+                        if (result.status === 0) {
+                            let error = result.execute_error.replace('Call: Error: ', '');
+                            console.log('交易失败, 原因：' + error);
+                            if (onFail) {
+                                onFail(error);
+                            }
+                        } else {
+                            // 必须要注意的是execute_result过长会截断
+                            let data = JSON.parse(result.execute_result);
+                            callback(data);
+                        }
+                    });
+                }
+            });
+        }
     </script>
+</div>
 </body>
 
 </html>

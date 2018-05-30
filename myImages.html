@@ -121,7 +121,10 @@
                     console.log("start fetching image list for user:" + nebAddress);
                     request(nebAddress, "getUserImageList", "", function (result) {
                         if (result) {
+                            $('#jsGrid').html('');
                             fillData(result);
+                        } else {
+                            $('#jsGrid').html('<p>You didn\'t upload any images.</p>');
                         }
                     });
 
