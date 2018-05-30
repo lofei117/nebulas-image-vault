@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Image Vault.</title>
+    <meta name="description" content="Source code generated using layoutit.com">
+    <meta name="author" content="lofei@lofei.info">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link href="css/style.css" rel="stylesheet">
+    <style>
+        #image-preview {
+            width: 400px;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            background-color: #ffffff;
+            color: #ecf0f1;
+        }
+
+        #image-preview input {
+            line-height: 200px;
+            font-size: 200px;
+            position: absolute;
+            opacity: 0;
+            z-index: 10;
+        }
+
+        #image-preview label {
+            position: absolute;
+            z-index: 5;
+            opacity: 0.8;
+            cursor: pointer;
+            background-color: #bdc3c7;
+            width: 200px;
+            height: 50px;
+            font-size: 20px;
+            line-height: 50px;
+            text-transform: uppercase;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link active" href="index.html">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="myImages.html">My Images</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Github</a>
+                </li>
+            </ul>
+            <div class="jumbotron">
+                <h2>
+                    Image Vault!
+                </h2>
+                <p>
+                    This is an image vault to save your image hash(sha256) value, image exif data,
+                    and author's information in nebulas blockchain. Once an image has been uploaded,
+                    the information can never be changed.
+                </p>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <form role="form">
+                        <div class="form-group">
+                            <h5>
+                                Choose your image.
+                            </h5>
+                            <div id="image-preview">
+                                <label for="image" id="image-label">Choose File</label>
+                                <input type="file" name="image" id="image" accept="image/"/>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="col-md-6">
+
+                    <div style="display: none;">
+                        <h5>
+                            Image Detail Exif.
+                        </h5>
+                        <p id="image-exif-detail">
+                        </p>
+                    </div>
+
+                    <div>
+                        <h5>
+                            Author information(Optional).
+                        </h5>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">
+                                Email address
+                            </label>
+                            <input type="email" id="author-email" class="form-control"
+                                   id="exampleInputEmail1" autocomplete="off"
+                                   style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAkCAYAAADo6zjiAAAAAXNSR0IArs4c6QAAAbNJREFUWAntV8FqwkAQnaymUkpChB7tKSfxWCie/Yb+gbdeCqGf0YsQ+hU95QNyDoWCF/HkqdeiIaEUqyZ1ArvodrOHxanQOiCzO28y781skKwFW3scPV1/febP69XqarNeNTB2KGs07U3Ttt/Ozp3bh/u7V7muheQf6ftLUWyYDB5yz1ijuPAub2QRDDunJsdGkAO55KYYjl0OUu1VXOzQZ64Tr+IiPXedGI79bQHdbheCIAD0dUY6gV6vB67rAvo6IxVgWVbFy71KBKkAFaEc2xPQarXA931ot9tyHphiPwpJgSbfe54Hw+EQHMfZ/msVEEURjMfjCjbFeG2dFxPo9/sVOSYzxmAwGIjnTDFRQLMQAjQ5pJAQkCQJ5HlekeERxHEsiE0xUUCzEO9AmqYQhiF0Oh2Yz+ewWCzEY6aYKKBZCAGYs1wuYTabKdNNMWWxnaA4gp3Yry5JBZRlWTXDvaozUgGTyQSyLAP0dbb3DtQlmcan0yngT2ekE9ARc+z4AvC7nauh9iouhpcGamJeX8XF8MaClwaeROWRA7nk+tUnyzGvZrKg0/40gdME/t8EvgG0/NOS6v9NHQAAAABJRU5ErkJggg==&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">
+                                Author Name
+                            </label>
+                            <input type="text" id="author-name" class="form-control"
+                                   id="exampleInputPassword1" autocomplete="off"
+                                   style="background-image: url(&quot;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAkCAYAAADo6zjiAAAAAXNSR0IArs4c6QAAAbNJREFUWAntV8FqwkAQnaymUkpChB7tKSfxWCie/Yb+gbdeCqGf0YsQ+hU95QNyDoWCF/HkqdeiIaEUqyZ1ArvodrOHxanQOiCzO28y781skKwFW3scPV1/febP69XqarNeNTB2KGs07U3Ttt/Ozp3bh/u7V7muheQf6ftLUWyYDB5yz1ijuPAub2QRDDunJsdGkAO55KYYjl0OUu1VXOzQZ64Tr+IiPXedGI79bQHdbheCIAD0dUY6gV6vB67rAvo6IxVgWVbFy71KBKkAFaEc2xPQarXA931ot9tyHphiPwpJgSbfe54Hw+EQHMfZ/msVEEURjMfjCjbFeG2dFxPo9/sVOSYzxmAwGIjnTDFRQLMQAjQ5pJAQkCQJ5HlekeERxHEsiE0xUUCzEO9AmqYQhiF0Oh2Yz+ewWCzEY6aYKKBZCAGYs1wuYTabKdNNMWWxnaA4gp3Yry5JBZRlWTXDvaozUgGTyQSyLAP0dbb3DtQlmcan0yngT2ekE9ARc+z4AvC7nauh9iouhpcGamJeX8XF8MaClwaeROWRA7nk+tUnyzGvZrKg0/40gdME/t8EvgG0/NOS6v9NHQAAAABJRU5ErkJggg==&quot;); background-repeat: no-repeat; background-attachment: scroll; background-size: 16px 18px; background-position: 98% 50%;">
+                        </div>
+                        <button type="button" id="btn-submit"
+                                class="btn btn-primary"
+                                style="margin-left: auto;margin-right: auto;">
+                            Upload
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/nebPay.js"></script>
+    <script src="js/nebulas.js"></script>
+    <script src="js/tether.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/scripts.js"></script>
+    <script src="js/jquery.uploadPreview.min.js"></script>
+    <script src="js/exif.min.js"></script>
+    <script src="js/components/core-min.js"></script>
+    <script src="js/rollups/sha256.js"></script>
+    <script>
+        "use strict";
+
+        // $("#search_value").attr("disabled",true)
+        // $("#search").attr("disabled",true)
+        // //to check if the extension is installed
+        // //if the extension is installed, var "webExtensionWallet" will be injected in to web page
+        // if(typeof(webExtensionWallet) === "undefined"){
+        //     //alert ("Extension wallet is not installed, please install it first.")
+        //     $("#noExtension").removeClass("hide")
+        // }else{
+        //     $("#search_value").attr("disabled",false)
+        //     $("#search").attr("disabled",false)
+        // }
+
+        var dappAddress = nebConfig["contractAddress"];
+
+        var serialNumber;
+
+        var intervalQuery
+
+        function funcIntervalQuery() {
+            nebPay.queryPayInfo(serialNumber) //search transaction result from server (result upload to server by app)
+                    .then(function (resp) {
+                        console.log("tx result: " + resp) //resp is a JSON string
+                        var respObject = JSON.parse(resp)
+                        if (respObject.code === 0) {
+                            alert(`upload image succeed!`)
+                            clearInterval(intervalQuery)
+                        }
+                    })
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+        }
+
+        function cbPush(resp) {
+            console.log("response of push: " + JSON.stringify(resp))
+        }
+
+        var image;
+        var author = new Author();
+
+        $('#btn-submit').click(function () {
+
+            if (image) {
+                author.name = $("#author-name").val();
+                author.email = $('#author-email').val();
+
+                var to = dappAddress;
+                var value = "0";
+                var callFunction = "save"
+                var data = {"image": image, "author": author};
+                var dataString = JSON.stringify(data);
+                dataString = dataString.replace(/"/g, "\\\"");
+                var callArgs = "[\"" + dataString + "\"]"
+
+                console.log(callArgs)
+
+                serialNumber = nebPay.call(to, value, callFunction, callArgs, { //使用nebpay的call接口去调用合约,
+                    listener: cbPush //设置listener, 处理交易返回信息
+                });
+
+                intervalQuery = setInterval(function () {
+                    funcIntervalQuery();
+                }, 5000);
+            } else {
+                alert("You should choose image file first.");
+            }
+
+        });
+
+        $(document).ready(function () {
+            $.uploadPreview({
+                input_field: "#image",
+                preview_box: "#image-preview",
+                label_field: "#image-label"
+            });
+
+            var oFile = new FileReader();
+            var passFileType = /^(?:image\/bmp|image\/gif|image\/jpeg|image\/png)$/i;
+            $('#image').on('change', function (e) {
+                if (!e.target || !e.target.files.length || !e.target.files[0]) {
+                    return
+                }
+
+                var _file = e.target.files[0];
+
+                if (!passFileType.test(_file.type)) {
+                    return
+                }
+
+                // oFile.readAsDataURL(_file);
+                oFile.readAsArrayBuffer(_file);
+
+                oFile.onloadend = function (evt) {
+                    if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+                        image = new Image();
+
+                        // image.imageHash = CryptoJS.SHA256(evt.target.result);
+                        var hash = CryptoJS.SHA256(arrayBufferToWordArray(evt.target.result));
+                        image.imageHash = hash.toString();
+                        console.log(image.getHash())
+                        // image.imageData = evt.target.result;
+
+                        EXIF.getData(_file, function () {
+                            var _dataJson = JSON.stringify(EXIF.getAllTags(this));
+
+                            var exif = EXIF.getAllTags(this);
+                            image.imageWidth = exif.ImageWidth;
+                            image.imageHeight = exif.ImageHeight;
+                            image.imageExif = exif;
+
+
+                            $('#image-exif-detail').html(_dataJson);
+
+                            var _rotate = 0;
+                            var _orientation = EXIF.getTag(this, 'Orientation');
+
+                            if (_orientation == 3) {
+                                _rotate = 180;
+                            } else if (_orientation == 6) {
+                                _rotate = 90;
+                            } else if (_orientation == 8) {
+                                _rotate = 270;
+                            }
+                            ;
+                        });
+
+                        $('#btn-submit').prop('disabled', false);
+
+                    }
+                };
+
+            });
+
+        });
+
+        function arrayBufferToWordArray(ab) {
+            var i8a = new Uint8Array(ab);
+            var a = [];
+            for (var i = 0; i < i8a.length; i += 4) {
+                a.push(i8a[i] << 24 | i8a[i + 1] << 16 | i8a[i + 2] << 8 | i8a[i + 3]);
+            }
+            return CryptoJS.lib.WordArray.create(a, i8a.length);
+        }
+
+
+        // var port = chrome.runtime.connect({ name: "contentscript" });
+        // port.postMessage({ src: "contentScript", dst: "background" });
+
+        // port.onMessage.addListener(function(msg) {
+        //     console.log("port.onMessage: " + JSON.stringify(msg));
+
+        //     window.postMessage({ //forward msg from background to webpage
+        //         "data": msg
+        //     }, "*");
+
+        // });
+    </script>
+</body>
+
+</html>

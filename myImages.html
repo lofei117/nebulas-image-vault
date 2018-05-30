@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Image Vault.</title>
+    <meta name="description" content="Source code generated using layoutit.com">
+    <meta name="author" content="lofei@lofei.info">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link href="css/style.css" rel="stylesheet">
+    <style>
+        .popup-overlay {
+            /*Hides pop-up when there is no "active" class*/
+            visibility: hidden;
+            position: absolute;
+            background: #ffffff;
+            border: 3px solid #666666;
+            width: 50%;
+            height: 70%;
+            left: 25%;
+        }
+
+        .popup-overlay.active {
+            /*displays pop-up when "active" class is present*/
+            visibility: visible;
+            text-align: center;
+        }
+
+        .popup-content {
+            /*Hides pop-up content when there is no "active" class */
+            visibility: hidden;
+            text-align: center;
+        }
+
+        .popup-content.active {
+            /*Shows pop-up content when "active" class is present */
+            visibility: visible;
+        }
+
+    </style>
+
+</head>
+
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link active" href="index.html">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="myImages.html">My Images</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Github</a>
+                </li>
+            </ul>
+            <div class="jumbotron">
+                <h2>
+                    Image Vault!
+                </h2>
+                <p>
+                    This is an image vault to save your image hash(sha256) value, image exif data,
+                    and author information in nebulas blockchain. Once an image has been uploaded,
+                    the information can never be changed.
+                </p>
+            </div>
+            <div class="row">
+                <div id="jsGrid" style="margin-left: auto;margin-right: auto;"></div>
+                <div class="popup-overlay">
+                    <!--Creates the popup content-->
+                    <div class="popup-content">
+                        <h2>Image Details</h2>
+                        <textarea id="image-detail" rows="6" cols="66"> This is an example pop-up that you can make using jQuery.</textarea>
+                        <!--popup's close button-->
+                        <p>
+                        <button id="close" class="btn btn-primary">Close</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/nebPay.js"></script>
+    <script src="js/nebulas.js"></script>
+    <script src="js/tether.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <link type="text/css" rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.css"/>
+    <link type="text/css" rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css"/>
+
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"></script>
+
+    <script src="js/scripts.js"></script>
+
+    <script>
+        "use strict";
+
+
+        var dappAddress = nebConfig["contractAddress"];
+
+        $(document).ready(function () {
+
+            window.postMessage({
+                "target": "contentscript",
+                "data": {},
+                "method": "getAccount",
+            }, "*");
+            window.addEventListener('message', function (e) {
+                if (e.data && e.data.data && e.data.data.account) {
+                    nebAddress = e.data.data.account;
+                    console.log(nebAddress)
+                    request("getUserImageList", "", function (result) {
+                        if (result) {
+                            fillData(result);
+                        }
+                    });
+
+                    if (typeof start != 'undefined') start()
+                }
+            })
+
+            //removes the "active" class to .popup and .popup-content when the "Close" button is clicked
+            $("#close, .popup-overlay").on("click", function () {
+                $(".popup-overlay, .popup-content").removeClass("active");
+            });
+
+        });
+
+        function fillData(data) {
+            $("#jsGrid").jsGrid({
+                width: "90%",
+                height: "auto",
+
+                inserting: false,
+                editing: false,
+                sorting: true,
+                paging: true,
+
+                data: data,
+
+                fields: [
+                    {
+                        name: "imageHash",
+//                        type: "text",
+                        width: 250,
+                        validate: "required",
+                        sorting: false,
+                        itemTemplate: function (value) {
+
+                            return $("<a>").attr("href", "#").text(value).on("click", function (e) {
+                                e.preventDefault();
+                                $(".popup-overlay, .popup-content").addClass("active");
+                                request("getImageInfoByHash", "\[\"" + value + "\"\]", function (result) {
+                                    $('#image-detail').text((JSON.stringify(result, null, 2)));
+
+                                });
+                            });
+                        }
+                    },
+                    {name: "timestamp", type: "number", width: 150, validate: "required"}
+
+                ]
+
+            });
+        }
+
+        function getAddress() {
+            return nebAddress;
+        }
+
+        function request(callFunction, callArgs, callback) {
+            let value = "0";
+            let nonce = "0";
+            let gasPrice = "1000000";
+            let gasLimit = "2000000";
+            let contract = {
+                "function": callFunction,
+                "args": callArgs
+            };
+
+            neb.api.call(getAddress(), dappAddress, value, nonce, gasPrice, gasLimit, contract).then(function (resp) {
+                console.log("request resp: " + JSON.stringify(resp));
+                if (callback) {
+                    callback(resp.result ? JSON.parse(resp.result) : null);
+                }
+            }).catch(function (err) {
+                console.log(err);
+            });
+        }
+
+
+    </script>
+
+</div>
+</body>
+
+</html>
