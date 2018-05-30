@@ -61,15 +61,13 @@ var NebPay = require("nebpay");
 var nebPay = new NebPay();
 var nebConfigArr = {
     mainnet: {
-        // TODO
         name: "主网",
-        contractAddress: "n1qQhDzswApj5SmRrNQBNd6nSjqaaqmmmZi",
-        txhash: "04222aa816c36a7895efd59256f4f2844fae253064ebc40c155266e3d6cc5220",
+        contractAddress: "n1k6nm1Y5Z6tS7xYcf8Dmuo9kEhnqCnFT4Y",
+        txhash: "fe10b1d0152b7ccdf879934bc4daa86deb6e8b831b89a91296f197cd7556ae08",
         host: "https://mainnet.nebulas.io",
         payhost: "https://pay.nebulas.io/api/mainnet/pay"
     },
     testnet: {
-        // TODO
         name: "测试网",
         contractAddress: "n21g7acsnLJqfKU3uTSY2k5M53djgHpu3SK",
         txhash: "e8ee35381c1e480ca5a61ce8eb88dc2b27d4284996b53cec7f2c6d57746aacf1",
@@ -84,6 +82,6 @@ var nebConfigArr = {
         payhost: "http://localhost/api/pay"
     }
 };
-var nebConfig = nebConfigArr["testnet"];
+var nebConfig = nebConfigArr["mainnet"];
 neb.setRequest(new nebulas.HttpRequest(nebConfig["host"]));
 
